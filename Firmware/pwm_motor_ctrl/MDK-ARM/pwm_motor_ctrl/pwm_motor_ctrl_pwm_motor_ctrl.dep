@@ -61,7 +61,7 @@ I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h)(0x57BFEF54)
 I (../Inc/stm32f1xx_it.h)(0x593145F8)
 I (../Src/fet_switch.h)(0x5934FFBD)
 I (../Inc/delay.h)(0x59312406)
-F (../Src/main.c)(0x59A524F9)(-c --cpu Cortex-M3 -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I../Inc -I../Drivers/STM32F1xx_HAL_Driver/Inc -I../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I../Drivers/CMSIS/Include --C99-I C:\Users\3\Documents\2\pwm_motor_ctrl_2\Firmware\pwm_motor_ctrl\MDK-ARM\RTE-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0\CMSIS\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.1.0\Device\Include-D__UVISION_VERSION="517" -D_RTE_ -DSTM32F10X_MD -DUSE_HAL_DRIVER -DSTM32F103xB-o pwm_motor_ctrl\main.o --omf_browse pwm_motor_ctrl\main.crf --depend pwm_motor_ctrl\main.d)
+F (../Src/main.c)(0x59A52BE8)(-c --cpu Cortex-M3 -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I../Inc -I../Drivers/STM32F1xx_HAL_Driver/Inc -I../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I../Drivers/CMSIS/Include --C99-I C:\Users\3\Documents\2\pwm_motor_ctrl_2\Firmware\pwm_motor_ctrl\MDK-ARM\RTE-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0\CMSIS\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.1.0\Device\Include-D__UVISION_VERSION="517" -D_RTE_ -DSTM32F10X_MD -DUSE_HAL_DRIVER -DSTM32F103xB-o pwm_motor_ctrl\main.o --omf_browse pwm_motor_ctrl\main.crf --depend pwm_motor_ctrl\main.d)
 I (../Inc/main.h)(0x593145FA)
 I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h)(0x57BFEF54)
 I (../Inc/stm32f1xx_hal_conf.h)(0x593145F9)
