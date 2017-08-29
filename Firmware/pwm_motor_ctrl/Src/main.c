@@ -182,7 +182,8 @@ int main(void)
 			{
 				ConsoleWrite("Lift is down, start moving UP\r\n");
 				// TODO: подъем
-				PWMValue=MySettings.ForwardSpeed;
+				PWMValue=1;
+				PWMSetting=MySettings.ForwardSpeed;
 				DevState=STATE_FORWARD; //Едем вверх
 				while(PWMValue++ <= PWMSetting-2) delay_ms(MySettings.SoftStartDelay);		// Плавный пуск
 				while((GetSensorState() & 0x04)==0x04); // Ждем схода с концевика
@@ -195,7 +196,7 @@ int main(void)
 			}		
 		}					
 		
-		if((SensorState & 0x01) == 0x00) //Прожектор внизу			
+		if((SensorState & 0x01) == 0x00) //Прожектор сошел вниз			
 		{
 			PWMValue=MySettings.BackwardSpeed;
 			ConsoleWrite("Projector is DOWN!\r");
