@@ -177,7 +177,7 @@ int main(void)
 		if((SensorState & 0x01) == 0x01) // Прожектор вверху
 		{
 			ConsoleWrite("Projector is UP!\r");
-			//if((SensorState & 0x02)==0x02) break; // Лифт вверху - выходим
+			
 			if((SensorState & 0x04)==0x04) // Нижний концевик активен
 			{
 				ConsoleWrite("Lift is down, start moving UP\r\n");
@@ -200,7 +200,7 @@ int main(void)
 		{
 			PWMValue=MySettings.BackwardSpeed;
 			ConsoleWrite("Projector is DOWN!\r");
-			//if((SensorState & 0x04)==0x04) break; // Лифт внизу - выходим
+			
 			if((SensorState & 0x02)==0x02) // Верхний концевик активен
 			{
 				// TODO: Опускание
