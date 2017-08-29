@@ -149,14 +149,6 @@ int main(void)
 	
 	HAL_GPIO_WritePin(RT_SWITCH_GPIO_Port,RT_SWITCH_Pin,GPIO_PIN_SET); // Запись в RS-485
 	
-//	ConsoleWrite("UP Speed:");
-//	MySettings.ForwardSpeed=ConsoleReadInteger();
-//	ConsoleWrite("DOWN Speed:");
-//	MySettings.BackwardSpeed=ConsoleReadInteger();
-//	ConsoleWrite("Stop delay:");
-//	MySettings.StopDelay=ConsoleReadInteger();
-	
-	//ConsoleWrite("-=< SETTINGS NOT CURRENTLY STORED >=-\r\n");
 	sprintf(UARTBuff,"Forward speed: %d\r\n",MySettings.ForwardSpeed);
 	ConsoleWrite(UARTBuff);
 	sprintf(UARTBuff,"Backward speed: %d\r\n",MySettings.BackwardSpeed);
@@ -170,92 +162,66 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+	
+	
+	
   while (1)
   {
-		// Обработка запрещенных состояний
 		
-//			while((GetSensorState() == 0x01) || (GetSensorState() == 0x06) || (GetSensorState() == 0x07) || (GetSensorState() == 0x00))
-//			{
-//				sprintf(UARTBuff,"ERROR state: %.2x\r\n", GetSensorState());
-//				HAL_UART_Transmit(&huart1,(void *)UARTBuff,strlen(UARTBuff),10);
-//				delay_ms(1000);
-//			}
-		
-		PrevSensorState=SensorState;
+// Маска датчиков: 	0x01 - прожектор 
+//									0x02 - концевик верх
+//									0x04 - концевик низ
+
 		SensorState=GetSensorState();
 		
-		if((SensorState & 0x01) != (PrevSensorState & 0x01)) // Первый концевик (прожектор) изменил состояние (срабатывание по фронту)
-		//if((SensorState & 0x01) == 0x00)											 // Первый концевик (прожектор) активен (срабатывание по состоянию)
+		if((SensorState & 0x01) == 0x01) // Прожектор вверху
 		{
-			sprintf(UARTBuff,"Sensor [0x01] changed!\r\n");
-			HAL_UART_Transmit(&huart1,(void *)UARTBuff,strlen(UARTBuff),10);
-			if((SensorState & 0x01) == 0x01) // Прожектор вверху
-			{						
-			// Движение вниз
-			PWMValue=1;
-			PWMSetting=MySettings.BackwardSpeed;
-			if(GetSensorState() & 0x02) //Лифт вверху 
+			ConsoleWrite("Projector is UP!\r");
+			if((SensorState & 0x04)==0x04) // Нижний концевик активен
 			{
-				MagnetOff();
-				DevState=STATE_BACKWARD; //Едем вниз
+				ConsoleWrite("Lift is down, start moving UP\r\n");
+				// TODO: подъем
 				
-				while(PWMValue++ <= PWMSetting-2) delay_ms(MySettings.SoftStartDelay);	// Плавный пуск
-												
-				sprintf(UARTBuff,"Sensor [0x02] ON -=- Drive BACKWARD  PWM: %d -=- Magnet Off\r\n", PWMValue);
-			  HAL_UART_Transmit(&huart1,(void *)UARTBuff,strlen(UARTBuff),10);
-				
-				while((GetSensorState() & 0x02)==0x02); // Ждем схода с концевика
-				
-				sprintf(UARTBuff,"Sensor [0x02] OFF\r\n");
-			  HAL_UART_Transmit(&huart1,(void *)UARTBuff,strlen(UARTBuff),10);
-				
-				delay_ms(MySettings.StopDelay); // Работаем 0.5с, и ставим на тормоз для опускания самоходом
-				DevState=STATE_HARDSTOP;
-				sprintf(UARTBuff,"Drive stopped!\r\n");
-			  HAL_UART_Transmit(&huart1,(void *)UARTBuff,strlen(UARTBuff),10);
-								
-				while((GetSensorState() & 0x04)!=0x04); // Ждем прихода на концевик
-				
-				sprintf(UARTBuff,"Sensor [0x04] ON -=- WORK ENDS\r\n");
-			  HAL_UART_Transmit(&huart1,(void *)UARTBuff,strlen(UARTBuff),10);
-				DevState=STATE_HARDSTOP;				
-				
-			}
-		}
-			
-		else
-		{
-			if((SensorState & 0x01) == 0x00) // Прожектор вверху		  
-			// Движение вверх
-			PWMValue=1;
-			PWMSetting=MySettings.ForwardSpeed;
-			if(GetSensorState() & 0x04) //Лифт внизу 
-			{
 				DevState=STATE_FORWARD; //Едем вверх
-				
 				while(PWMValue++ <= PWMSetting-2) delay_ms(MySettings.SoftStartDelay);		// Плавный пуск
-							
-				sprintf(UARTBuff,"Sensor [0x04] ON -=- Drive FORWARD PWM: %d\r\n",PWMValue);
-			  HAL_UART_Transmit(&huart1,(void *)UARTBuff,strlen(UARTBuff),10);
-				
 				while((GetSensorState() & 0x04)==0x04); // Ждем схода с концевика
-				
-				sprintf(UARTBuff,"Sensor [0x04] OFF\r\n");
-			  HAL_UART_Transmit(&huart1,(void *)UARTBuff,strlen(UARTBuff),10);
-								
+				ConsoleWrite("Down switch if OFF\r\n");
 				while((GetSensorState() & 0x02)!=0x02); // Ждем прихода на концевик
-				
-				sprintf(UARTBuff,"Sensor [0x02] ON -=- WORK ENDS -=- Magnet ON\r\n");
-			  HAL_UART_Transmit(&huart1,(void *)UARTBuff,strlen(UARTBuff),10);
-			  
+				ConsoleWrite("Up switch is ON\r\n");
 				MagnetOn();
-				DevState=STATE_HARDSTOP;
+				ConsoleWrite("Magnet is ON\r\n");
+				DevState=STATE_HARDSTOP;				
+			}		
+		}					
+		
+		if((SensorState & 0x01) == 0x00) //Прожектор внизу			
+		{
+			ConsoleWrite("Projector is DOWN!\r");
+			if((SensorState & 0x02) == 0x02) // Верхний концевик активен
+			{
+				// TODO: Опускание
 			
+				PWMValue=1;
+				PWMSetting=MySettings.BackwardSpeed;
+				if(GetSensorState() & 0x02) //Лифт вверху 
+				{
+					ConsoleWrite("Lift is DOWN, moving UP\r\n");	
+					ConsoleWrite("Magnet is OFF\r\n");
+					MagnetOff();
+					DevState=STATE_BACKWARD; //Едем вниз				
+					while(PWMValue++ <= PWMSetting-2) delay_ms(MySettings.SoftStartDelay);	// Плавный пуск
+					while((GetSensorState() & 0x02)==0x02); // Ждем схода с концевика
+					ConsoleWrite("Up switch is OFF\r\n");
+					delay_ms(MySettings.StopDelay); // Работаем 0.5с, и ставим на тормоз для опускания самоходом
+					DevState=STATE_HARDSTOP;
+					while((GetSensorState() & 0x04)!=0x04); // Ждем прихода на концевик
+					ConsoleWrite("Down switch is ON\r\n");
+					DevState=STATE_HARDSTOP;				
+				}				
 			}	
 		}
-	}
-		DevState=STATE_STOP;
-	
+
+		DevState=STATE_STOP;	
 		PrevSensorState=SensorState;
 		delay_ms(100);		
  } // loop ends
